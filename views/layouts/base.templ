@@ -1,0 +1,119 @@
+package layouts
+
+
+
+
+var (
+	title = "chat project"
+)
+
+
+
+
+templ BaseLayout() {
+	
+	<html lang="en">
+		<head>
+			<title>{ title }</title>
+
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			  <link rel="stylesheet"  href="static/css/styles.css"/>
+			 <link
+  rel="stylesheet"
+  href="https://unpkg.com/franken-wc@0.0.2/dist/css/zinc.min.css"
+/>	
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit-icons.min.js"></script>
+
+			  
+			  
+
+ 
+			
+			
+			<!-- Alpine Plugins -->
+			<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+		
+
+			<!-- HTMX -->
+ <script src="https://unpkg.com/htmx.org@1.9.10"
+    integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
+    crossorigin="anonymous"></script>
+	
+
+<!-- Custom Scripts -->
+<script>
+let socket = null;
+
+
+window.onbeforeunload = function() {
+	console.log("leaving")
+	let jsonDta = {}
+	jsonData["action"] = "left"
+	socket.send(JSON.stringify(jsonData))
+
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    socket = new WebSocket("ws://127.0.0.1:8000/ws");
+
+    socket.onopen = () => {
+        console.log("connected");
+    }
+
+    socket.onmessage = msg => {
+        let data = JSON.parse(msg.data);
+        console.log("Action", data.action);
+
+          switch (data.action) {
+            case "list_users":
+                let ul = document.getElementById("online_users");
+                while (ul.firstChild) ul.removeChild(ul.firstChild);
+
+                if (data.connected_users.length > 0) {
+                    data.connected_users.forEach(function(item){
+                        let li = document.createElement("li");
+                        li.appendChild(document.createTextNode(item));
+                        ul.appendChild(li);
+                    });
+                }
+                break;
+            case "broadcast":
+                let textarea = document.getElementById("message");
+                textarea.value += data.message + '\n';
+                break;
+        }
+    }
+
+    socket.onclose = () => {
+        console.log("WebSocket connection closed");
+    }
+
+    socket.onerror = (error) => {
+        console.error("WebSocket error: " + error);
+    };
+
+    let userInput = document.getElementById("username");
+    if (userInput) {
+        userInput.addEventListener("change", function() {
+            let jsonData = {
+                action: "username",
+                username: this.value
+            };
+            socket.send(JSON.stringify(jsonData));
+        });
+    }
+});
+</script>
+
+
+		</head>
+		<body x-data="{theme: 'dark'}" :class="theme" lang="en">
+			{ children... }
+			
+		</body>
+	</html>
+}

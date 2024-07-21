@@ -1,0 +1,32 @@
+package layouts
+
+import (
+	"Chat/views/components"
+	
+
+)
+
+templ App() {
+	@BaseLayout() {
+		@components.Navigation()
+            <div class="max-w-7xl mx-auto">
+                { children... }
+            </div>
+            <div class="flex justify-center items-center py-20 mb-20">
+                @components.Index()
+			{ children... }
+            </div>
+		
+		
+
+
+
+		
+	
+		
+		
+	}
+	
+}
+
+

@@ -1,0 +1,78 @@
+package layouts
+
+import ( 
+	
+	"Chat/views/components"
+	"Chat/views/helper"
+)
+
+templ Chat() {
+	@BaseLayout() {
+		@components.Navigation()
+		<div class="max-w-7xl mx-auto">
+			{ children... }
+		</div>
+		@helper.MaxWidth("") {
+			<div class="container mx-auto mt-28">
+				<div class="grid grid-cols-8 gap-4">
+					<!-- Who's Online Column -->
+					<div class="col-span-12 ">
+						<div class="col-md-4 p-4">
+							<h2 class="font-semibold mb-4 uk-heading-small uk-margin">Who's 
+							<span class="text-blue-600">Online    </span></h2>
+							<ul id="online_users" class="space-y-2">
+								<!-- Online users will be populated here -->
+							</ul>
+						</div>
+					</div>
+					<!-- Chat Column -->
+					<div class="col-span-12 lg:col-span-9">
+						<div>
+							<div class="flex p-4">
+								<ul id="chat_room" class="hx-swap-oob" hx-swap="beforeend">
+									<!-- Chat messages will be populated here -->
+								</ul>
+							</div>
+							<form id="form" hx-reset-on-success hx-post="/send" hx-trigger="submit" hx-include="[name='message'], [name='username']" hx-target="#chat_room"  class="flex space-x-2">
+							    
+									 
+										
+																		<input
+																			name="username"
+																			id="username"
+																			class="uk-input uk-width-1-4"
+																			type="text"
+																			placeholder="your username"
+																			aria-label="Not clickable icon"
+																		/>
+									
+								
+								<input
+								
+									name="message"
+									class="uk-input uk-width-3-4"
+									type="text"
+									placeholder="type your message"
+									aria-label="uk-width-3-4"
+								/>
+								<button  type="submit" class="cursor-pointer shadow-[0_0_0_3px_#000000_inset] px-6 py-2 bg-transparent border border-black dark:border-white dark:text-white text-foreground rounded-lg font-bold transform hover:-translate-y-1 transition duration-400">
+									Send
+								</button>
+							</form>
+							<div id="chat_room" class="uk-margin">
+								<textarea
+									id="message"
+									class="uk-textarea"
+									rows="10"
+									aria-label="Textarea"
+									disabled
+								></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	}
+}
+
